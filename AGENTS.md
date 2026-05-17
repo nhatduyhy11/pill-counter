@@ -1,7 +1,7 @@
 # Pill Counter - Agent Guide
 
 ## Project Overview
-AI-powered pill counter using Google Gemini. Vietnamese UI. Single-page app with image upload and pill detection overlay.
+AI-powered pill counter using vision model (via OpenRouter). Vietnamese UI. Single-page app with image upload and pill detection overlay. Currently POC/testing phase — model not finalized.
 
 ## Tech Stack
 - **Next.js 16.2.6** (App Router) + React 19.2.4
@@ -20,13 +20,28 @@ pnpm lint         # Run ESLint (flat config)
 No test framework configured.
 
 ## Architecture
-- `app/page.tsx` - Main client component (`"use client"`)
-- `app/api/count/route.ts` - POST endpoint, receives base64 image, returns pill count + coordinates
-- `lib/pill-common.ts` - Shared prompt, types (`PillCountResult`), and response parser
-- `lib/openrouter.ts` - OpenRouter API integration
-- `lib/compress.ts` - Client-side image compression (5MB limit, 2048px max dimension)
-- `components/` - ImagePicker, ResultDisplay, AnnotatedImage (canvas overlay)
-- `components/ui/` - shadcn components (button, card, badge)
+```
+pill-counter/
+├── app/
+│   ├── layout.tsx
+│   ├── page.tsx              # Main client component ("use client")
+│   ├── globals.css
+│   └── api/
+│       └── count/
+│           └── route.ts      # POST endpoint, receives base64 image, returns pill count + coordinates
+├── components/
+│   ├── image-picker.tsx      # File picker + camera
+│   ├── result-display.tsx    # Hiển thị kết quả
+│   ├── annotated-image.tsx   # Canvas vẽ circle markers
+│   └── ui/                   # shadcn components (button, card, badge)
+├── lib/
+│   ├── pill-common.ts        # Shared prompt, types (PillCountResult), response parser
+│   ├── openrouter.ts         # OpenRouter API integration
+│   └── compress.ts           # Client-side image compression (5MB limit, 2048px max)
+├── public/
+├── .env.local                # OPENROUTER_API_KEY
+└── ...config files
+```
 
 ## Environment
 Requires `OPENROUTER_API_KEY` in `.env.local` (see `.env.example`).
@@ -48,6 +63,23 @@ All user-facing strings are Vietnamese. Preserve this convention.
 - Canvas overlay draws numbered circles on detected pills
 - Annotation style: chấm (dot) tại trung tâm viên thuốc + đánh số thứ tự (1, 2, 3...)
 - shadcn components added via `npx shadcn@latest add <component>`
+
+## AI Prompt
+- Gửi ảnh + prompt yêu cầu đếm pills, trả về JSON `{count, points[]}`
+- Points là normalized coordinates (0-1) cho vị trí từng viên
+- Parser trong `lib/pill-common.ts` xử lý response
+
+## Error Messages (Vietnamese)
+1. File quá lớn (> 5MB sau compress) → "Ảnh quá lớn, vui lòng chọn ảnh nhỏ hơn"
+2. File không phải ảnh → "Vui lòng chọn file ảnh"
+3. AI API error → "Không thể phân ảnh, vui lòng thử lại"
+4. Không tìm thấy thuốc → "Không tìm thấy viên thuốc nào trong ảnh"
+5. Response parse error → "Không thể phân ảnh, vui lòng thử lại"
+
+## Operational Notes
+- Image gửi dưới dạng base64 inline (không upload lên storage)
+- Canvas annotation cần handle device pixel ratio cho sắc nét trên Retina
+- Camera capture cần HTTPS trên mobile
 
 ## File References
 - `node_modules/next/dist/docs/` - Next.js 16 documentation (consult before writing code)
