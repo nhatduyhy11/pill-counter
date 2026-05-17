@@ -22,13 +22,14 @@ No test framework configured.
 ## Architecture
 - `app/page.tsx` - Main client component (`"use client"`)
 - `app/api/count/route.ts` - POST endpoint, receives base64 image, returns pill count + coordinates
-- `lib/gemini.ts` - Gemini AI integration (`gemini-2.0-flash` model)
+- `lib/pill-common.ts` - Shared prompt, types (`PillCountResult`), and response parser
+- `lib/openrouter.ts` - OpenRouter API integration
 - `lib/compress.ts` - Client-side image compression (5MB limit, 2048px max dimension)
 - `components/` - ImagePicker, ResultDisplay, AnnotatedImage (canvas overlay)
 - `components/ui/` - shadcn components (button, card, badge)
 
 ## Environment
-Requires `GEMINI_API_KEY` in `.env.local` (see `.env.example`).
+Requires `OPENROUTER_API_KEY` in `.env.local` (see `.env.example`).
 
 ## Next.js 16 Breaking Changes (Critical)
 - **Turbopack default**: `--turbopack` flag no longer needed
@@ -45,6 +46,7 @@ All user-facing strings are Vietnamese. Preserve this convention.
 - Images compressed client-side before upload (base64 format)
 - API returns normalized coordinates (0-1) for pill positions
 - Canvas overlay draws numbered circles on detected pills
+- Annotation style: chấm (dot) tại trung tâm viên thuốc + đánh số thứ tự (1, 2, 3...)
 - shadcn components added via `npx shadcn@latest add <component>`
 
 ## File References

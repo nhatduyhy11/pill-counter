@@ -78,6 +78,7 @@ export function ImagePicker({ onImageSelected, disabled }: ImagePickerProps) {
 
       {preview && (
         <div className="relative rounded-lg overflow-hidden border">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={preview}
             alt="Selected"

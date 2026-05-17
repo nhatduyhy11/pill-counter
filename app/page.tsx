@@ -5,17 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ImagePicker } from "@/components/image-picker";
 import { ResultDisplay } from "@/components/result-display";
-
-interface Result {
-  count: number;
-  points: { x: number; y: number }[];
-}
+import type { PillCountResult } from "@/lib/pill-common";
 
 export default function Home() {
   const [image, setImage] = useState<string | null>(null);
-  const [result, setResult] = useState<Result | null>(null);
+  const [result, setResult] = useState<PillCountResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [pickerKey, setPickerKey] = useState(0);
 
   const handleCount = async () => {
     if (!image) return;
@@ -50,6 +47,7 @@ export default function Home() {
     setImage(null);
     setResult(null);
     setError(null);
+    setPickerKey((k) => k + 1);
   };
 
   return (
@@ -64,7 +62,7 @@ export default function Home() {
             <CardTitle>Chọn ảnh</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <ImagePicker onImageSelected={setImage} disabled={loading} />
+            <ImagePicker key={pickerKey} onImageSelected={setImage} disabled={loading} />
 
             <div className="flex gap-3">
               <Button

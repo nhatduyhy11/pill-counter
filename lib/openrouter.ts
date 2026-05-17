@@ -4,6 +4,8 @@ import {
   parsePillCountResponse,
 } from "./pill-common";
 
+const OPENROUTER_MODEL = "google/gemini-2.5-flash-lite";
+
 export async function countPills(
   imageBase64: string
 ): Promise<PillCountResult> {
@@ -19,7 +21,7 @@ export async function countPills(
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash-lite",
+        model: OPENROUTER_MODEL,
         messages: [
           {
             role: "user",
