@@ -20,21 +20,43 @@ Where:
 If no pills are found, return {"count": 0, "points": []}
 Do not include any text outside the JSON object.`;
 
-export function parsePillCountResponse(text: string): PillCountResult {
-  const jsonMatch = text.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) throw new Error("Invalid response from AI");
+function extractJson(text: string): string {
+  const start = text.indexOf("{");
+  if (start === -1) throw new Error("Invalid response from AI");
 
-  const parsed = JSON.parse(jsonMatch[0]);
+  let depth = 0;
+  for (let i = start; i < text.length; i++) {
+    if (text[i] === "{") depth++;
+    if (text[i] === "}") depth--;
+    if (depth === 0) return text.slice(start, i + 1);
+  }
+  throw new Error("Invalid response from AI");
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, value));
+}
+
+export function parsePillCountResponse(text: string): PillCountResult {
+  const jsonStr = extractJson(text);
+  const parsed = JSON.parse(jsonStr);
 
   if (typeof parsed.count !== "number" || !Array.isArray(parsed.points)) {
     throw new Error("Invalid response format");
   }
 
-  return {
-    count: parsed.count,
-    points: parsed.points.filter(
+  const points = parsed.points
+    .filter(
       (p: { x: number; y: number }) =>
         typeof p.x === "number" && typeof p.y === "number"
-    ),
+    )
+    .map((p: { x: number; y: number }) => ({
+      x: clamp(p.x, 0, 1),
+      y: clamp(p.y, 0, 1),
+    }));
+
+  return {
+    count: points.length,
+    points,
   };
 }
