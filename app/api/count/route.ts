@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { countPills } from "@/lib/gemini";
+import { countPills } from "@/lib/openrouter";
 
 export async function POST(request: NextRequest) {
   try {
