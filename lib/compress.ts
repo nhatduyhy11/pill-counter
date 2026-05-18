@@ -3,7 +3,13 @@ const MAX_DIMENSION = 2048;
 const QUALITY_STEP = 0.1;
 const MIN_QUALITY = 0.3;
 
-export async function compressImage(file: File): Promise<string> {
+export interface CompressedImage {
+  base64: string;
+  width: number;
+  height: number;
+}
+
+export async function compressImage(file: File): Promise<CompressedImage> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -18,10 +24,14 @@ export async function compressImage(file: File): Promise<string> {
           height = Math.round(height * ratio);
         }
 
-        canvas.width = width;
-        canvas.height = height;
+        // Normalize to 1:1 square — center image with white padding
+        const size = Math.max(width, height);
+        canvas.width = size;
+        canvas.height = size;
         const ctx = canvas.getContext("2d")!;
-        ctx.drawImage(img, 0, 0, width, height);
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, size, size);
+        ctx.drawImage(img, Math.round((size - width) / 2), Math.round((size - height) / 2), width, height);
 
         let quality = 0.8;
         let base64 = canvas.toDataURL("image/jpeg", quality);
@@ -31,7 +41,7 @@ export async function compressImage(file: File): Promise<string> {
           base64 = canvas.toDataURL("image/jpeg", quality);
         }
 
-        resolve(base64);
+        resolve({ base64, width: size, height: size });
       };
       img.onerror = () => reject(new Error("Failed to load image"));
       img.src = e.target?.result as string;

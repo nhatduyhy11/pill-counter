@@ -1,11 +1,18 @@
 "use client";
 
 import { useState } from "react";
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, value));
+}
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ImagePicker } from "@/components/image-picker";
 import { ResultDisplay } from "@/components/result-display";
-import type { PillCountResult } from "@/lib/pill-common";
+import {
+  type PillCountResult,
+  parsePillCountResponse,
+} from "@/lib/pill-common";
 
 export default function Home() {
   const [image, setImage] = useState<string | null>(null);
@@ -35,7 +42,22 @@ export default function Home() {
         throw new Error(data.error || "Failed to analyze image");
       }
 
-      setResult(data);
+      const parsed = parsePillCountResponse(data.text);
+      console.log({points : parsed.points})
+      const points = parsed.points
+        .filter(
+          (p: { x: number; y: number }) =>
+            typeof p.x === "number" && typeof p.y === "number"
+        )
+        .map((p: { x: number; y: number }) => ({
+          x: clamp(p.x, 0, 1),
+          y: clamp(p.y, 0, 1),
+        }));
+
+      setResult({
+        count: points.length,
+        points,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -62,7 +84,7 @@ export default function Home() {
             <CardTitle>Chọn ảnh</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <ImagePicker key={pickerKey} onImageSelected={setImage} disabled={loading} />
+            <ImagePicker key={pickerKey} onImageSelected={(base64) => { setImage(base64); }} disabled={loading} />
 
             <div className="flex gap-3">
               <Button

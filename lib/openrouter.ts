@@ -1,14 +1,8 @@
-import {
-  type PillCountResult,
-  PILL_COUNT_PROMPT,
-  parsePillCountResponse,
-} from "./pill-common";
+import { buildPillCountPrompt } from "./pill-common";
 
-const OPENROUTER_MODEL = "google/gemini-2.5-flash-lite";
+const OPENROUTER_MODEL = "google/gemini-3-flash-preview";
 
-export async function countPills(
-  imageBase64: string
-): Promise<PillCountResult> {
+export async function countPills(imageBase64: string): Promise<string> {
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) throw new Error("OPENROUTER_API_KEY not configured");
 
@@ -22,11 +16,12 @@ export async function countPills(
       },
       body: JSON.stringify({
         model: OPENROUTER_MODEL,
+        temperature: 0.1,
         messages: [
           {
             role: "user",
             content: [
-              { type: "text", text: PILL_COUNT_PROMPT },
+              { type: "text", text: buildPillCountPrompt() },
               {
                 type: "image_url",
                 image_url: { url: imageBase64 },
@@ -47,5 +42,6 @@ export async function countPills(
   const text = data.choices?.[0]?.message?.content?.trim();
   if (!text) throw new Error("Empty response from AI");
 
-  return parsePillCountResponse(text);
+  console.log("Raw AI response:", text.slice(0, 500));
+  return text;
 }

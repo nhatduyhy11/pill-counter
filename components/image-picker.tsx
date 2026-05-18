@@ -17,7 +17,7 @@ export function ImagePicker({ onImageSelected, disabled }: ImagePickerProps) {
   const handleFile = async (file: File) => {
     if (!file.type.startsWith("image/")) return;
     try {
-      const base64 = await compressImage(file);
+      const { base64 } = await compressImage(file);
       setPreview(base64);
       onImageSelected(base64);
     } catch (err) {

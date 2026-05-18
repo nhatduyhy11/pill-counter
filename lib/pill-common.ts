@@ -3,22 +3,31 @@ export interface PillCountResult {
   points: { x: number; y: number }[];
 }
 
-export const PILL_COUNT_PROMPT = `Analyze this image and count the number of pills/tablets/capsules visible.
+export function buildPillCountPrompt(): string {
+  return `You are a precise pill counting assistant. Count every pill, tablet, or capsule in this image and return the exact center of each one.
 
-Return ONLY a JSON object in this exact format:
-{
-  "count": <number>,
-  "points": [{"x": <0-1>, "y": <0-1>}, ...]
+The image is a square. Ignore any white padding areas — only count pills on the actual photo content.
+
+INSTRUCTIONS:
+1. Scan the ENTIRE image carefully — check all areas including edges and corners
+2. Count every distinct pill. A pill may be round, oval, or capsule-shaped
+3. If pills overlap partially, count each visible pill separately
+4. For each pill, locate its geometric center (the point equidistant from all edges of the pill shape)
+
+COORDINATE SYSTEM (normalized 0.0 to 1.0):
+- x: 0.0 = left edge, 1.0 = right edge
+- y: 0.0 = top edge, 1.0 = bottom edge
+- Example: center of image = {"x": 0.5, "y": 0.5}
+
+PRECISION: Use at least 2 decimal places. The center must be ON the pill.
+
+Return ONLY JSON:
+{"count": <number>, "points": [{"x": <0.0-1.0>, "y": <0.0-1.0>}, ...]}
+
+points array must have exactly "count" entries.
+If no pills found: {"count": 0, "points": []}
+No text outside the JSON.`;
 }
-
-Where:
-- "count" is the total number of pills
-- "points" contains the center position of each pill as normalized coordinates (0.0 to 1.0)
-- x=0 is left edge, x=1 is right edge
-- y=0 is top edge, y=1 is bottom edge
-
-If no pills are found, return {"count": 0, "points": []}
-Do not include any text outside the JSON object.`;
 
 function extractJson(text: string): string {
   const start = text.indexOf("{");
@@ -33,10 +42,6 @@ function extractJson(text: string): string {
   throw new Error("Invalid response from AI");
 }
 
-function clamp(value: number, min: number, max: number): number {
-  return Math.max(min, Math.min(max, value));
-}
-
 export function parsePillCountResponse(text: string): PillCountResult {
   const jsonStr = extractJson(text);
   const parsed = JSON.parse(jsonStr);
@@ -45,18 +50,8 @@ export function parsePillCountResponse(text: string): PillCountResult {
     throw new Error("Invalid response format");
   }
 
-  const points = parsed.points
-    .filter(
-      (p: { x: number; y: number }) =>
-        typeof p.x === "number" && typeof p.y === "number"
-    )
-    .map((p: { x: number; y: number }) => ({
-      x: clamp(p.x, 0, 1),
-      y: clamp(p.y, 0, 1),
-    }));
-
   return {
-    count: points.length,
-    points,
+    count: parsed.count,
+    points: parsed.points,
   };
 }
