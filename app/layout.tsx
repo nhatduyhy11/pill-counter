@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Pill Counter",
-  description: "Đếm số viên thuốc trong ảnh bằng AI",
+  description: "Đếm số viên thuốc trong ảnh bằng xử lý ảnh",
 };
 
 export default function RootLayout({

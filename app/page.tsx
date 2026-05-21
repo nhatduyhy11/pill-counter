@@ -1,15 +1,15 @@
 "use client";
 
 import { useState } from "react";
-
-function clamp(value: number, min: number, max: number): number {
-  return Math.max(min, Math.min(max, value));
-}
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ImagePicker } from "@/components/image-picker";
 import { ResultDisplay } from "@/components/result-display";
 import { type PillCountResult } from "@/lib/pill-common";
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, value));
+}
 
 export default function Home() {
   const [image, setImage] = useState<string | null>(null);
@@ -36,7 +36,7 @@ export default function Home() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Failed to analyze image");
+        throw new Error(data.error || "Không thể phân tích ảnh, vui lòng thử lại");
       }
 
       const points = (data.points as { x: number; y: number }[])
@@ -53,7 +53,11 @@ export default function Home() {
         points,
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Không thể phân tích ảnh, vui lòng thử lại"
+      );
     } finally {
       setLoading(false);
     }
@@ -78,7 +82,17 @@ export default function Home() {
             <CardTitle>Chọn ảnh</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <ImagePicker key={pickerKey} onImageSelected={(base64) => { setImage(base64); }} disabled={loading} />
+            <ImagePicker
+              key={pickerKey}
+              onImageSelected={(base64) => {
+                setImage(base64);
+              }}
+              disabled={loading}
+            />
+            <p className="text-sm text-zinc-600 dark:text-zinc-400">
+              Mẹo: dùng nền phẳng, tương phản với màu thuốc, tránh bóng gắt và
+              hạn chế viên thuốc chồng lên nhau.
+            </p>
 
             <div className="flex gap-3">
               <Button

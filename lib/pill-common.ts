@@ -1,6 +1,54 @@
+export interface PillPoint {
+  x: number;
+  y: number;
+}
+
+export interface PillCountCandidateDebug {
+  name: string;
+  score: number;
+  foregroundRatio: number;
+  borderForegroundRatio: number;
+  componentCount: number;
+  smallComponentRatio: number;
+}
+
+export interface PillCountDebug {
+  image: {
+    width: number;
+    height: number;
+    processedWidth: number;
+    processedHeight: number;
+  };
+  selectedMode: string;
+  foregroundRatio: number;
+  candidateScores: PillCountCandidateDebug[];
+  rejectedComponents: number;
+  sourceComponents: number;
+  clustersSplit: number;
+  warnings: string[];
+}
+
 export interface PillCountResult {
   count: number;
-  points: { x: number; y: number }[];
+  points: PillPoint[];
+  debug?: PillCountDebug;
+}
+
+export function isPillCountResult(value: unknown): value is PillCountResult {
+  if (typeof value !== "object" || value === null) return false;
+
+  const result = value as { count?: unknown; points?: unknown };
+  return (
+    typeof result.count === "number" &&
+    Array.isArray(result.points) &&
+    result.points.every(
+      (point) =>
+        typeof point === "object" &&
+        point !== null &&
+        typeof (point as { x?: unknown }).x === "number" &&
+        typeof (point as { y?: unknown }).y === "number"
+    )
+  );
 }
 
 export function buildPillCountPrompt(): string {
