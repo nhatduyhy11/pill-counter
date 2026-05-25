@@ -9,10 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ImagePicker } from "@/components/image-picker";
 import { ResultDisplay } from "@/components/result-display";
-import {
-  type PillCountResult,
-  parsePillCountResponse,
-} from "@/lib/pill-common";
+import { type PillCountResult } from "@/lib/pill-common";
 
 export default function Home() {
   const [image, setImage] = useState<string | null>(null);
@@ -42,14 +39,11 @@ export default function Home() {
         throw new Error(data.error || "Failed to analyze image");
       }
 
-      const parsed = parsePillCountResponse(data.text);
-      console.log({points : parsed.points})
-      const points = parsed.points
+      const points = (data.points as { x: number; y: number }[])
         .filter(
-          (p: { x: number; y: number }) =>
-            typeof p.x === "number" && typeof p.y === "number"
+          (p) => typeof p.x === "number" && typeof p.y === "number"
         )
-        .map((p: { x: number; y: number }) => ({
+        .map((p) => ({
           x: clamp(p.x, 0, 1),
           y: clamp(p.y, 0, 1),
         }));

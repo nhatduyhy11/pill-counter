@@ -13,8 +13,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const text = await countPills(image);
-    return NextResponse.json({ text });
+    const result = await countPills(image);
+    return NextResponse.json(result);
   } catch (error) {
     console.error("Count error:", error);
     return NextResponse.json(

@@ -28,30 +28,3 @@ points array must have exactly "count" entries.
 If no pills found: {"count": 0, "points": []}
 No text outside the JSON.`;
 }
-
-function extractJson(text: string): string {
-  const start = text.indexOf("{");
-  if (start === -1) throw new Error("Invalid response from AI");
-
-  let depth = 0;
-  for (let i = start; i < text.length; i++) {
-    if (text[i] === "{") depth++;
-    if (text[i] === "}") depth--;
-    if (depth === 0) return text.slice(start, i + 1);
-  }
-  throw new Error("Invalid response from AI");
-}
-
-export function parsePillCountResponse(text: string): PillCountResult {
-  const jsonStr = extractJson(text);
-  const parsed = JSON.parse(jsonStr);
-
-  if (typeof parsed.count !== "number" || !Array.isArray(parsed.points)) {
-    throw new Error("Invalid response format");
-  }
-
-  return {
-    count: parsed.count,
-    points: parsed.points,
-  };
-}

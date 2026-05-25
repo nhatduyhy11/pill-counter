@@ -1,8 +1,8 @@
-import { buildPillCountPrompt } from "./pill-common";
+import { buildPillCountPrompt, type PillCountResult } from "./pill-common";
 
-const OPENROUTER_MODEL = "google/gemini-3-flash-preview";
+const OPENROUTER_MODEL = "openai/gpt-5.5";
 
-export async function countPills(imageBase64: string): Promise<string> {
+export async function countPills(imageBase64: string): Promise<PillCountResult> {
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) throw new Error("OPENROUTER_API_KEY not configured");
 
@@ -17,6 +17,7 @@ export async function countPills(imageBase64: string): Promise<string> {
       body: JSON.stringify({
         model: OPENROUTER_MODEL,
         temperature: 0.1,
+        response_format: { type: "json_object" },
         messages: [
           {
             role: "user",
@@ -43,5 +44,20 @@ export async function countPills(imageBase64: string): Promise<string> {
   if (!text) throw new Error("Empty response from AI");
 
   console.log("Raw AI response:", text.slice(0, 500));
-  return text;
+
+  let parsed: { count: number; points: unknown[] };
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    throw new Error("AI returned invalid JSON");
+  }
+
+  if (typeof parsed.count !== "number" || !Array.isArray(parsed.points)) {
+    throw new Error("Invalid response format from AI");
+  }
+
+  return {
+    count: parsed.count,
+    points: parsed.points as PillCountResult["points"],
+  };
 }
