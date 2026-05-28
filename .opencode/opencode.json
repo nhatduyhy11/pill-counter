@@ -1,0 +1,11 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "read": {
+      "/Users/danhtran/myData/src_learn/pill-counter/.opencode/get-shit-done/*": "allow"
+    },
+    "external_directory": {
+      "/Users/danhtran/myData/src_learn/pill-counter/.opencode/get-shit-done/*": "allow"
+    }
+  }
+}
