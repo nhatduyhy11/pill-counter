@@ -75,13 +75,13 @@
 | PIPE-05 | Phase 1 | Pending |
 | OUT-01 | Phase 1 | Pending |
 | OUT-02 | Phase 1 | Pending |
-| OUT-03 | Phase 1 | Pending |
-| OUT-04 | Phase 1 | Pending |
+| OUT-03 | Phase 2 | Pending |
+| OUT-04 | Phase 2 | Pending |
 | ERR-01 | Phase 1 | Pending |
 | ERR-02 | Phase 1 | Pending |
-| ERR-03 | Phase 1 | Pending |
-| DBG-01 | Phase 2 | Pending |
-| DBG-02 | Phase 2 | Pending |
+| ERR-03 | Phase 2 | Pending |
+| DBG-01 | Phase 3 | Pending |
+| DBG-02 | Phase 1 | Pending |
 | DBG-03 | Phase 2 | Pending |
 
 **Coverage:**
@@ -91,4 +91,4 @@
 
 ---
 *Requirements defined: 2026-05-28*
-*Last updated: 2026-05-28 after initial definition*
+*Last updated: 2026-05-28 after roadmap creation*
