@@ -29,11 +29,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Pipeline correctly counts pills on white paper background (0-1 off)
   4. Pipeline correctly counts pills on silver medical tray background (0-1 off)
   5. Touching pills at edges are separated and counted individually via watershed
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
+- [ ] 01-01-PLAN.md — CV Pipeline Core: pure function pipeline with background detection, watershed, contour filtering
+- [ ] 01-02-PLAN.md — CLI + Annotation + Output: argparse CLI, red dot annotation, batch processing, error handling
 
 ### Phase 2: Batch Processing + Reporting
 **Mode:** mvp
