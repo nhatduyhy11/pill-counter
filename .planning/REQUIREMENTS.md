@@ -7,29 +7,29 @@
 
 ### Core Pipeline
 
-- [ ] **PIPE-01**: CLI accepts folder path as input and scans all JPG/PNG/WEBP images
-- [ ] **PIPE-02**: Each image processed through OpenCV pipeline (grayscale → threshold → morphology → distance transform → watershed → contour filtering)
-- [ ] **PIPE-03**: Detected pills filtered by area, circularity, and solidity to reject noise
-- [ ] **PIPE-04**: Pipeline handles white paper and silver medical tray backgrounds (auto-detect from corners)
-- [ ] **PIPE-05**: Pipeline handles touching pills via watershed separation
+- [x] **PIPE-01**: CLI accepts folder path as input and scans all JPG/PNG/WEBP images
+- [x] **PIPE-02**: Each image processed through OpenCV pipeline (grayscale → threshold → morphology → distance transform → watershed → contour filtering)
+- [x] **PIPE-03**: Detected pills filtered by area, circularity, and solidity to reject noise
+- [x] **PIPE-04**: Pipeline handles white paper and silver medical tray backgrounds (auto-detect from corners)
+- [x] **PIPE-05**: Pipeline handles touching pills via watershed separation
 
 ### Output
 
-- [ ] **OUT-01**: Each detected pill gets a red dot at centroid + sequence number on annotated image
-- [ ] **OUT-02**: Annotated images saved to output directory (separate from input)
+- [x] **OUT-01**: Each detected pill gets a red dot at centroid + sequence number on annotated image
+- [x] **OUT-02**: Annotated images saved to output directory (separate from input)
 - [ ] **OUT-03**: JSON report with per-image count, status, filenames, and aggregate total
 - [ ] **OUT-04**: Output directory is configurable via `-o/--output` flag (default: `./output/`)
 
 ### Error Handling
 
-- [ ] **ERR-01**: Invalid/corrupt images skipped with error logged, batch continues
-- [ ] **ERR-02**: Empty folder produces clear error message
+- [x] **ERR-01**: Invalid/corrupt images skipped with error logged, batch continues
+- [x] **ERR-02**: Empty folder produces clear error message
 - [ ] **ERR-03**: Exit codes: 0=success, 1=error, 2=partial failure
 
 ### Debug & Usability
 
 - [ ] **DBG-01**: `--debug` flag saves intermediate CV images (threshold, morphology, distance transform, watershed markers) to debug folder
-- [ ] **DBG-02**: Background auto-detection from image corners (white vs silver vs other)
+- [x] **DBG-02**: Background auto-detection from image corners (white vs silver vs other)
 - [ ] **DBG-03**: Progress bar shows current/total images during batch processing
 
 ## v2 Requirements
@@ -68,23 +68,24 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PIPE-01 | Phase 1 | Pending |
-| PIPE-02 | Phase 1 | Pending |
-| PIPE-03 | Phase 1 | Pending |
-| PIPE-04 | Phase 1 | Pending |
-| PIPE-05 | Phase 1 | Pending |
-| OUT-01 | Phase 1 | Pending |
-| OUT-02 | Phase 1 | Pending |
+| PIPE-01 | Phase 1 | Complete |
+| PIPE-02 | Phase 1 | Complete |
+| PIPE-03 | Phase 1 | Complete |
+| PIPE-04 | Phase 1 | Complete |
+| PIPE-05 | Phase 1 | Complete |
+| OUT-01 | Phase 1 | Complete |
+| OUT-02 | Phase 1 | Complete |
 | OUT-03 | Phase 2 | Pending |
 | OUT-04 | Phase 2 | Pending |
-| ERR-01 | Phase 1 | Pending |
-| ERR-02 | Phase 1 | Pending |
+| ERR-01 | Phase 1 | Complete |
+| ERR-02 | Phase 1 | Complete |
 | ERR-03 | Phase 2 | Pending |
 | DBG-01 | Phase 3 | Pending |
-| DBG-02 | Phase 1 | Pending |
+| DBG-02 | Phase 1 | Complete |
 | DBG-03 | Phase 2 | Pending |
 
 **Coverage:**
+
 - v1 requirements: 15 total
 - Mapped to phases: 15
 - Unmapped: 0
