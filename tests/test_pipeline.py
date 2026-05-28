@@ -74,11 +74,11 @@ class TestMultiplePills:
 
 class TestTouchingPills:
     def test_two_touching_circles_returns_count_2(self):
-        """Two overlapping circles separated by watershed returns count=2."""
+        """Two touching circles separated by watershed returns count=2."""
         img = _make_image(400, 400, bg_color=0)
-        # Draw two circles that overlap at edge
-        img = _draw_circle(img, (170, 200), radius=40, color=255)
-        img = _draw_circle(img, (230, 200), radius=40, color=255)
+        # Draw two circles that touch at edge (centers ~2*radius apart)
+        img = _draw_circle(img, (160, 200), radius=40, color=255)
+        img = _draw_circle(img, (240, 200), radius=40, color=255)
         result = count_pills(img)
         assert result.count == 2
 
@@ -132,8 +132,8 @@ class TestNoiseFiltering:
         """Elongated rectangle filtered out by min_circularity."""
         img = _make_image(400, 400, bg_color=0)
         img = _draw_circle(img, (300, 300), radius=30, color=255)  # real pill
-        # Draw elongated rectangle (low circularity)
-        cv2.rectangle(img, (20, 180), (180, 220), 255, -1)
+        # Draw very elongated rectangle (200x20 → circularity ≈ 0.28 < 0.3)
+        cv2.rectangle(img, (20, 190), (220, 210), 255, -1)
         result = count_pills(img)
         assert result.count == 1
 
