@@ -8,11 +8,10 @@ DEFAULT_CONFIG: dict = {
     "morphology_kernel_size": 3,
     "open_iterations": 2,
     "close_iterations": 2,
-    "distance_threshold": 0.5,
-    "min_area_ratio": 0.0001,
-    "max_area_ratio": 0.1,
+    "min_area": 50,
+    "max_area_ratio": 0.15,
     "min_circularity": 0.3,
-    "min_solidity": 0.5,
+    "merge_distance": 40,
     "background_sample_size": 20,
 }
 

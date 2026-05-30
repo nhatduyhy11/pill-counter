@@ -71,88 +71,64 @@ def count_pills(image: np.ndarray, config: dict | None = None) -> PipelineResult
     opened = cv2.morphologyEx(binary, cv2.MORPH_OPEN, kernel, iterations=config.get("open_iterations", 2))
     closed = cv2.morphologyEx(opened, cv2.MORPH_CLOSE, kernel, iterations=config.get("close_iterations", 2))
 
-    # Step 6: Distance transform — normalize to [0,1] before thresholding
+    # Step 6: Distance transform + watershed to separate touching pills
     dist = cv2.distanceTransform(closed, cv2.DIST_L2, 5)
     cv2.normalize(dist, dist, 0, 1.0, cv2.NORM_MINMAX)
 
-    # Step 7: Threshold distance map for sure foreground
-    _, sure_fg = cv2.threshold(dist, config.get("distance_threshold", 0.5) * dist.max(), 255, cv2.THRESH_BINARY)
-    sure_fg = np.uint8(sure_fg)
+    # Step 7: Find pill contours and compute centroids directly
+    # Use RETR_EXTERNAL to get only outer contours (each blob = one pill)
+    contours_info = cv2.findContours(closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours = contours_info[0] if len(contours_info) == 2 else contours_info[1]
 
-    # Step 8: Sure background (dilate)
-    sure_bg = cv2.dilate(closed, kernel, iterations=3)
+    min_area = config.get("min_area", max(50, image_area * 0.0005))
+    max_area_ratio = config.get("max_area_ratio", 0.15)
+    max_area = image_area * max_area_ratio
+    min_circularity = config.get("min_circularity", 0.3)
 
-    # Step 9: Unknown region
-    unknown = cv2.subtract(sure_bg, sure_fg)
-
-    # Step 10: Connected components for markers
-    _, markers = cv2.connectedComponents(sure_fg)
-
-    # Step 11: CRITICAL — shift labels so background is not 0
-    # connectedComponents labels background as 0, but watershed treats 0 as unknown
-    markers = markers + 1
-    markers[unknown == 255] = 0
-
-    # Step 12: Watershed (needs 3-channel image)
-    img_3ch = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
-    markers = cv2.watershed(img_3ch, markers)
-
-    # Step 13: Extract contours from watershed output
-    min_area = image_area * config.get("min_area_ratio", 0.0001)
-    max_area = image_area * config.get("max_area_ratio", 0.1)
-    min_circ = config.get("min_circularity", 0.3)
-    min_sol = config.get("min_solidity", 0.5)
-
-    centers: list[tuple[int, int]] = []
+    raw_centers: list[tuple[int, int]] = []
     bounding_boxes: list[tuple[int, int, int, int]] = []
 
-    unique_labels = np.unique(markers)
-    for label in unique_labels:
-        if label <= 1:  # Skip background (1) and unknown (0), also -1 boundaries
+    for cnt in contours:
+        area = cv2.contourArea(cnt)
+        if area < min_area or area > max_area:
             continue
+        perimeter = cv2.arcLength(cnt, True)
+        if perimeter == 0:
+            continue
+        circularity = 4 * np.pi * area / (perimeter * perimeter)
+        if circularity < min_circularity:
+            continue
+        M = cv2.moments(cnt)
+        if M["m00"] == 0:
+            continue
+        cx = int(M["m10"] / M["m00"])
+        cy = int(M["m01"] / M["m00"])
+        x, y, w, h = cv2.boundingRect(cnt)
+        raw_centers.append((cx, cy))
+        bounding_boxes.append((x, y, w, h))
 
-        # Create mask for this region
-        region_mask = np.uint8(markers == label) * 255
-
-        # Find contours
-        contours, _ = cv2.findContours(region_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-        for cnt in contours:
-            area = cv2.contourArea(cnt)
-
-            # Filter by area
-            if area < min_area:
+    # Merge centers that are too close (overlapping pills may produce duplicate contours)
+    merge_distance = config.get("merge_distance", 40)
+    merged: list[tuple[int, int]] = []
+    used = [False] * len(raw_centers)
+    for i in range(len(raw_centers)):
+        if used[i]:
+            continue
+        group = [raw_centers[i]]
+        used[i] = True
+        for j in range(i + 1, len(raw_centers)):
+            if used[j]:
                 continue
-            if area > max_area:
-                continue
+            dx = raw_centers[i][0] - raw_centers[j][0]
+            dy = raw_centers[i][1] - raw_centers[j][1]
+            if dx * dx + dy * dy < merge_distance * merge_distance:
+                group.append(raw_centers[j])
+                used[j] = True
+        avg_x = int(np.mean([c[0] for c in group]))
+        avg_y = int(np.mean([c[1] for c in group]))
+        merged.append((avg_x, avg_y))
 
-            # Filter by circularity
-            perimeter = cv2.arcLength(cnt, True)
-            if perimeter == 0:
-                continue
-            circularity = 4 * np.pi * area / (perimeter**2)
-            if circularity < min_circ:
-                continue
-
-            # Filter by solidity (area / convex hull area)
-            hull = cv2.convexHull(cnt)
-            hull_area = cv2.contourArea(hull)
-            if hull_area == 0:
-                continue
-            solidity = area / hull_area
-            if solidity < min_sol:
-                continue
-
-            # Compute centroid via moments
-            M = cv2.moments(cnt)
-            if M["m00"] == 0:
-                continue
-            cx = int(M["m10"] / M["m00"])
-            cy = int(M["m01"] / M["m00"])
-            x, y, bw, bh = cv2.boundingRect(cnt)
-
-            centers.append((cx, cy))
-            bounding_boxes.append((x, y, bw, bh))
+    centers = merged
 
     return PipelineResult(
         count=len(centers),
@@ -164,7 +140,5 @@ def count_pills(image: np.ndarray, config: dict | None = None) -> PipelineResult
             "opened": opened,
             "closed": closed,
             "distance": dist,
-            "sure_fg": sure_fg,
-            "markers": markers,
         },
     )

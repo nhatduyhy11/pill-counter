@@ -1,0 +1,201 @@
+{
+  "main": {
+    "id": "0a7493559ccfba2e",
+    "type": "split",
+    "children": [
+      {
+        "id": "4c343c74a1135562",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "5584270d6a9f9284",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ROADMAP.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "ROADMAP"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "ee86c5bb57b25518",
+    "type": "split",
+    "children": [
+      {
+        "id": "cc96e0849fe6867a",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "13990c78b932d095",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "964d57a2156ab0b7",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "2c4a1e0064b4a79e",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "2f50c3c3d809acc1",
+    "type": "split",
+    "children": [
+      {
+        "id": "e564bc8e5ce5f5bc",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "337d52db48bb8653",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "ROADMAP.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for ROADMAP"
+            }
+          },
+          {
+            "id": "d6afb317089e87de",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "ROADMAP.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from ROADMAP"
+            }
+          },
+          {
+            "id": "ce115b48df015e09",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "b0f86a1d675fe782",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "e3daaae623d52a1f",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "ROADMAP.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of ROADMAP"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "5584270d6a9f9284",
+  "lastOpenFiles": [
+    "phases/02-batch-processing-reporting/02-VERIFICATION.md",
+    "phases/02-batch-processing-reporting/02-REVIEW.md",
+    "phases/02-batch-processing-reporting/02-01-SUMMARY.md",
+    "phases/02-batch-processing-reporting/02-01-PLAN.md",
+    "phases/02-batch-processing-reporting/02-RESEARCH.md",
+    "phases/01-core-pipeline/01-RESEARCH.md",
+    "phases/01-core-pipeline/01-02-SUMMARY.md",
+    "phases/01-core-pipeline/01-02-PLAN.md",
+    "phases/01-core-pipeline/01-01-SUMMARY.md",
+    "phases/01-core-pipeline/01-01-PLAN.md",
+    "research/ARCHITECTURE.md",
+    "codebase/ARCHITECTURE.md"
+  ]
+}

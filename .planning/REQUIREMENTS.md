@@ -17,20 +17,20 @@
 
 - [x] **OUT-01**: Each detected pill gets a red dot at centroid + sequence number on annotated image
 - [x] **OUT-02**: Annotated images saved to output directory (separate from input)
-- [ ] **OUT-03**: JSON report with per-image count, status, filenames, and aggregate total
-- [ ] **OUT-04**: Output directory is configurable via `-o/--output` flag (default: `./output/`)
+- [x] **OUT-03**: JSON report with per-image count, status, filenames, and aggregate total
+- [x] **OUT-04**: Output directory is configurable via `-o/--output` flag (default: `./output/`)
 
 ### Error Handling
 
 - [x] **ERR-01**: Invalid/corrupt images skipped with error logged, batch continues
 - [x] **ERR-02**: Empty folder produces clear error message
-- [ ] **ERR-03**: Exit codes: 0=success, 1=error, 2=partial failure
+- [x] **ERR-03**: Exit codes: 0=success, 1=error, 2=partial failure
 
 ### Debug & Usability
 
 - [ ] **DBG-01**: `--debug` flag saves intermediate CV images (threshold, morphology, distance transform, watershed markers) to debug folder
 - [x] **DBG-02**: Background auto-detection from image corners (white vs silver vs other)
-- [ ] **DBG-03**: Progress bar shows current/total images during batch processing
+- [x] **DBG-03**: Progress bar shows current/total images during batch processing
 
 ## v2 Requirements
 
@@ -75,14 +75,14 @@
 | PIPE-05 | Phase 1 | Complete |
 | OUT-01 | Phase 1 | Complete |
 | OUT-02 | Phase 1 | Complete |
-| OUT-03 | Phase 2 | Pending |
-| OUT-04 | Phase 2 | Pending |
+| OUT-03 | Phase 2 | Complete |
+| OUT-04 | Phase 2 | Complete |
 | ERR-01 | Phase 1 | Complete |
 | ERR-02 | Phase 1 | Complete |
-| ERR-03 | Phase 2 | Pending |
+| ERR-03 | Phase 2 | Complete |
 | DBG-01 | Phase 3 | Pending |
 | DBG-02 | Phase 1 | Complete |
-| DBG-03 | Phase 2 | Pending |
+| DBG-03 | Phase 2 | Complete |
 
 **Coverage:**
 
