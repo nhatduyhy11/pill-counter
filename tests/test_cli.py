@@ -1,6 +1,7 @@
 """Tests for CLI, annotator, and batch processing."""
 
 import cv2
+import json
 import numpy as np
 import pytest
 from pathlib import Path
@@ -255,3 +256,107 @@ class TestCLI:
             with pytest.raises(SystemExit) as exc_info:
                 main()
             assert exc_info.value.code == 1
+
+
+class TestCLIReport:
+    def test_creates_report_json(self, tmp_path: Path):
+        """CLI creates report.json in output directory."""
+        _save_test_image(tmp_path / "a.jpg", circles=[(100, 100, 30)])
+        out_dir = tmp_path / "output"
+        with patch("sys.argv", ["pill-counter", str(tmp_path), "-o", str(out_dir)]):
+            from pill_counter.cli import main
+            with pytest.raises(SystemExit):
+                main()
+        assert (out_dir / "report.json").exists()
+
+    def test_report_has_correct_keys(self, tmp_path: Path):
+        """report.json has total_pills, total_images, results keys."""
+        _save_test_image(tmp_path / "a.jpg", circles=[(100, 100, 30)])
+        out_dir = tmp_path / "output"
+        with patch("sys.argv", ["pill-counter", str(tmp_path), "-o", str(out_dir)]):
+            from pill_counter.cli import main
+            with pytest.raises(SystemExit):
+                main()
+        report = json.loads((out_dir / "report.json").read_text())
+        assert "total_pills" in report
+        assert "total_images" in report
+        assert "results" in report
+
+    def test_report_total_pills_is_nonneg_int(self, tmp_path: Path):
+        """report.json total_pills is a non-negative integer."""
+        _save_test_image(tmp_path / "a.jpg", circles=[(100, 100, 30)])
+        out_dir = tmp_path / "output"
+        with patch("sys.argv", ["pill-counter", str(tmp_path), "-o", str(out_dir)]):
+            from pill_counter.cli import main
+            with pytest.raises(SystemExit):
+                main()
+        report = json.loads((out_dir / "report.json").read_text())
+        assert isinstance(report["total_pills"], int)
+        assert report["total_pills"] >= 0
+
+    def test_report_total_images_matches_results(self, tmp_path: Path):
+        """report.json total_images equals len(results)."""
+        _save_test_image(tmp_path / "a.jpg", circles=[(100, 100, 30)])
+        _save_test_image(tmp_path / "b.jpg", circles=[(100, 100, 30)])
+        out_dir = tmp_path / "output"
+        with patch("sys.argv", ["pill-counter", str(tmp_path), "-o", str(out_dir)]):
+            from pill_counter.cli import main
+            with pytest.raises(SystemExit):
+                main()
+        report = json.loads((out_dir / "report.json").read_text())
+        assert report["total_images"] == len(report["results"])
+
+    def test_report_result_has_expected_keys(self, tmp_path: Path):
+        """Each result in report.json has filename, count, status, centers."""
+        _save_test_image(tmp_path / "a.jpg", circles=[(100, 100, 30)])
+        out_dir = tmp_path / "output"
+        with patch("sys.argv", ["pill-counter", str(tmp_path), "-o", str(out_dir)]):
+            from pill_counter.cli import main
+            with pytest.raises(SystemExit):
+                main()
+        report = json.loads((out_dir / "report.json").read_text())
+        for r in report["results"]:
+            assert "filename" in r
+            assert "count" in r
+            assert "status" in r
+            assert "centers" in r
+
+    def test_report_includes_error_results(self, tmp_path: Path):
+        """Error results in report.json have error_msg key."""
+        _save_test_image(tmp_path / "good.jpg", circles=[(100, 100, 30)])
+        (tmp_path / "bad.jpg").write_bytes(b"not an image")
+        out_dir = tmp_path / "output"
+        with patch("sys.argv", ["pill-counter", str(tmp_path), "-o", str(out_dir)]):
+            from pill_counter.cli import main
+            with pytest.raises(SystemExit) as exc_info:
+                main()
+        assert exc_info.value.code == 2  # partial failure
+        report = json.loads((out_dir / "report.json").read_text())
+        error_results = [r for r in report["results"] if r["status"] == "error"]
+        assert len(error_results) >= 1
+        for r in error_results:
+            assert "error_msg" in r
+
+    def test_report_valid_json(self, tmp_path: Path):
+        """report.json is valid JSON parseable by json.loads."""
+        _save_test_image(tmp_path / "a.jpg", circles=[(100, 100, 30)])
+        out_dir = tmp_path / "output"
+        with patch("sys.argv", ["pill-counter", str(tmp_path), "-o", str(out_dir)]):
+            from pill_counter.cli import main
+            with pytest.raises(SystemExit):
+                main()
+        content = (out_dir / "report.json").read_text()
+        report = json.loads(content)  # must not raise
+        assert isinstance(report, dict)
+
+    def test_terminal_output_still_prints(self, tmp_path: Path, capsys):
+        """Terminal output still prints per-image lines and summary."""
+        _save_test_image(tmp_path / "a.jpg", circles=[(100, 100, 30)])
+        out_dir = tmp_path / "output"
+        with patch("sys.argv", ["pill-counter", str(tmp_path), "-o", str(out_dir)]):
+            from pill_counter.cli import main
+            with pytest.raises(SystemExit):
+                main()
+        captured = capsys.readouterr()
+        assert "a.jpg" in captured.out
+        assert "Total:" in captured.out
