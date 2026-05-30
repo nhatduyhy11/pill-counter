@@ -1,6 +1,7 @@
 """CLI entry point for pill-counter — argparse interface."""
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -47,10 +48,20 @@ def main(argv: list[str] | None = None) -> None:
 
     # Process folder
     try:
-        results = process_folder(input_path, output_path)
+        results = process_folder(input_path, output_path, progress=True)
     except ValueError as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
+
+    # Build JSON report (D-01 shape)
+    total_pills = sum(r["count"] for r in results if r["status"] == "ok")
+    report = {
+        "total_pills": total_pills,
+        "total_images": len(results),
+        "results": results,
+    }
+    report_path = output_path / "report.json"
+    report_path.write_text(json.dumps(report, indent=2, ensure_ascii=False))
 
     # Print per-image results
     error_count = 0
