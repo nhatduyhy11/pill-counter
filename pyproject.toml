@@ -1,6 +1,6 @@
 [build-system]
 requires = ["setuptools>=75.0"]
-build-backend = "setuptools.backends._legacy:_Backend"
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "pill-counter"
@@ -21,6 +21,9 @@ notebooks = [
 
 [project.scripts]
 pill-counter = "pill_counter.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["pill_counter*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
