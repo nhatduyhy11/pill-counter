@@ -3,6 +3,7 @@
 import cv2
 import logging
 from pathlib import Path
+from tqdm import tqdm
 
 from .pipeline import count_pills
 from .annotator import annotate_image
@@ -70,8 +71,13 @@ def process_single_image(image_path: Path, output_dir: Path) -> dict:
         }
 
 
-def process_folder(input_dir: Path, output_dir: Path) -> list[dict]:
+def process_folder(input_dir: Path, output_dir: Path, progress: bool = False) -> list[dict]:
     """Scan folder for images, process each, return list of results.
+
+    Args:
+        input_dir: Folder containing images to process.
+        output_dir: Folder for annotated output images.
+        progress: If True, show tqdm progress bar during processing.
 
     Raises ValueError if no images found (ERR-02).
     Creates output_dir if it does not exist (OUT-02).
@@ -83,7 +89,8 @@ def process_folder(input_dir: Path, output_dir: Path) -> list[dict]:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     results: list[dict] = []
-    for img_path in images:
+    iterator = tqdm(images, desc="Processing", unit="img") if progress else images
+    for img_path in iterator:
         result = process_single_image(img_path, output_dir)
         results.append(result)
 
