@@ -200,6 +200,35 @@ class TestProcessFolder:
         assert statuses["bad.jpg"] == "error"
 
 
+class TestProcessFolderProgress:
+    def test_progress_false_returns_same_results(self, tmp_path: Path):
+        """process_folder with progress=False returns results for all images."""
+        _save_test_image(tmp_path / "a.jpg", circles=[(100, 100, 30)])
+        _save_test_image(tmp_path / "b.jpg", circles=[(100, 100, 30)])
+        out_dir = tmp_path / "output"
+        results = process_folder(tmp_path, out_dir, progress=False)
+        assert len(results) == 2
+
+    def test_progress_true_returns_same_results(self, tmp_path: Path):
+        """process_folder with progress=True returns same result structure."""
+        _save_test_image(tmp_path / "a.jpg", circles=[(100, 100, 30)])
+        _save_test_image(tmp_path / "b.jpg", circles=[(100, 100, 30)])
+        out_dir = tmp_path / "output"
+        results = process_folder(tmp_path, out_dir, progress=True)
+        assert len(results) == 2
+        for r in results:
+            assert "filename" in r
+            assert "count" in r
+            assert "status" in r
+
+    def test_progress_parameter_backward_compatible(self, tmp_path: Path):
+        """process_folder() without progress kwarg still works."""
+        _save_test_image(tmp_path / "a.jpg", circles=[(100, 100, 30)])
+        out_dir = tmp_path / "output"
+        results = process_folder(tmp_path, out_dir)
+        assert len(results) == 1
+
+
 class TestCLI:
     def test_main_valid_folder_exits_zero(self, tmp_path: Path):
         """CLI with valid folder path processes images and exits 0."""
