@@ -1,4 +1,4 @@
-# Roadmap: Pill Counter CLI
+	# Roadmap: Pill Counter CLI
 
 ## Overview
 
@@ -14,7 +14,7 @@ Standalone Python CLI for batch pill counting using classical OpenCV computer vi
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Core Pipeline + CLI** - CV pipeline counts pills accurately on single images with annotated output (completed 2026-05-28)
-- [ ] **Phase 2: Batch Processing + Reporting** - Process folders of images with JSON report, progress bar, and exit codes
+- [x] **Phase 2: Batch Processing + Reporting** - Process folders of images with JSON report, progress bar, and exit codes (completed 2026-05-30)
 - [ ] **Phase 3: Debug Mode** - Save intermediate CV images for pipeline tuning and troubleshooting
 
 ## Phase Details
@@ -53,11 +53,11 @@ Plans:
   3. CLI exits with code 0 on success, 1 on error, 2 on partial failure
   4. Invalid/corrupt images are skipped with error logged, batch continues processing remaining images
 
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
 
-- [ ] 02-01: TBD
+- [x] 02-01-PLAN.md — JSON report generation + progress bar
 
 ### Phase 3: Debug Mode
 
@@ -69,7 +69,7 @@ Plans:
 
   1. User can run `pill-counter <folder> --debug` and see intermediate CV images (threshold, morphology, distance transform, watershed markers) saved to debug folder
 
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
 
@@ -83,5 +83,5 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Core Pipeline + CLI | 2/2 | Complete    | 2026-05-28 |
-| 2. Batch Processing + Reporting | 0/1 | Not started | - |
+| 2. Batch Processing + Reporting | 1/1 | Complete   | 2026-05-30 |
 | 3. Debug Mode | 0/1 | Not started | - |
